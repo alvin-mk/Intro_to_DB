@@ -6,14 +6,20 @@ If it already exists, it will not fail.
 
 import mysql.connector
 from mysql.connector import Error
+import os
 
 def create_database():
     try:
-        # Connect to MySQL server (adjust username & password as needed)
+        # Get MySQL credentials from environment variables
+        db_user = os.getenv("MYSQL_USER", "root")
+        db_pass = os.getenv("MYSQL_PASSWORD", "")
+        db_host = os.getenv("MYSQL_HOST", "localhost")
+
+        # Connect to MySQL server
         connection = mysql.connector.connect(
-            host="localhost",
-            user="root",         # change if needed
-            password="your_password"  # change if needed
+            host=db_host,
+            user=db_user,
+            password=db_pass
         )
 
         if connection.is_connected():
@@ -25,10 +31,9 @@ def create_database():
         print(f"Error while connecting to MySQL: {e}")
 
     finally:
-        # Close cursor and connection
         if 'cursor' in locals() and cursor:
             cursor.close()
-        if connection.is_connected():
+        if 'connection' in locals() and connection.is_connected():
             connection.close()
 
 if __name__ == "__main__":
